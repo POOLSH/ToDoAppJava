@@ -37,9 +37,14 @@ public class UserService {
     }
 
     public User getCurrentUser() {
-        var userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Auth details: " + auth);
+        System.out.println("Authorities: " + auth.getAuthorities());
+
+        var userName = auth.getName();
         return getByUsername(userName);
     }
+
 
     @Deprecated
     public void getAdmin(){

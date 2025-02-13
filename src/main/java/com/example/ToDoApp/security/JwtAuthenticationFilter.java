@@ -59,20 +59,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Если токен валиден, то аутентифицируем пользователя
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                System.out.println("✅ Токен валиден для пользователя: " + username);
+                System.out.println("🔍 Роли пользователя: " + userDetails.getAuthorities());
 
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        userDetails.getAuthorities()
+                        userDetails.getAuthorities() // <--- ВАЖНО!
                 );
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authToken);
+                System.out.println("🛡 Устанавливаем аутентификацию для: " + userDetails.getUsername());
+                System.out.println("📜 Выдаваемые роли: " + userDetails.getAuthorities());
                 SecurityContextHolder.setContext(context);
             }
+
         }
+        System.out.println("🔎 Передаём в `doFilter`");
         filterChain.doFilter(request, response);
+        System.out.println("✔ После `doFilter` - SecurityContext: " + SecurityContextHolder.getContext().getAuthentication());
+
     }
 }
 
